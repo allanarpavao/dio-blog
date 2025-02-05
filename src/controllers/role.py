@@ -1,5 +1,5 @@
 from flask import Blueprint, request
-from src.app import User, db, Role
+from src.models import db, Role
 from http import HTTPStatus
 
 # __name__ nome do módulo "user.py"
