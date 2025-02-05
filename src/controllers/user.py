@@ -4,7 +4,7 @@ from src.models import User, db
 from http import HTTPStatus
 from sqlalchemy import inspect
 from src.utils import requires_role
-
+from src.app import bcrypt
 
 # __name__ nome do módulo "user.py"
 # padrao restful: nomes no plural
@@ -15,9 +15,10 @@ def _create_user():
     data = request.json
     user = User(
         username=data["username"],
-        password=data["password"],
+        password=bcrypt.generate_password_hash(data["password"]),
         role_id=data["role_id"],
         )
+
     db.session.add(user)
     db.session.commit()
 
