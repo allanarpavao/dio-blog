@@ -1,13 +1,17 @@
 import os
 from flask import Flask, request
 from flask_bcrypt import Bcrypt
+from flask_marshmallow import Marshmallow
 from flask_migrate import Migrate
 from flask_jwt_extended import JWTManager
 from src.models import db
+from flask import json
+from werkzeug.exceptions import HTTPException
 
 migrate = Migrate()
 jwt = JWTManager()
 bcrypt = Bcrypt()
+ma = Marshmallow()
 
 
 def create_app(environment=os.environ['ENVIRONMENT']):
@@ -31,6 +35,7 @@ def create_app(environment=os.environ['ENVIRONMENT']):
     migrate.init_app(app, db)
     jwt.init_app(app)
     bcrypt.init_app(app)
+    ma.init_app(app)
 
     # register blueprints
     from src.controllers import user, post, auth, role
@@ -38,5 +43,20 @@ def create_app(environment=os.environ['ENVIRONMENT']):
     app.register_blueprint(post.app)
     app.register_blueprint(auth.app)
     app.register_blueprint(role.app)
+
+
+    @app.errorhandler(HTTPException)
+    def handle_exception(e):
+        """Return JSON instead of HTML for HTTP errors."""
+        # start with the correct headers and status code from the error
+        response = e.get_response()
+        # replace the body with JSON
+        response.data = json.dumps({
+            "code": e.code,
+            "name": e.name,
+            "description": e.description,
+        })
+        response.content_type = "application/json"
+        return response
 
     return app

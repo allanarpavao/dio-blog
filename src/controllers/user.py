@@ -5,6 +5,8 @@ from http import HTTPStatus
 from sqlalchemy import inspect
 from src.utils import requires_role
 from src.app import bcrypt
+from src.views.user import UserSchema, CreateUserSchema
+from marshmallow import ValidationError
 
 # __name__ nome do módulo "user.py"
 # padrao restful: nomes no plural
@@ -12,42 +14,38 @@ app = Blueprint("user", __name__, url_prefix="/users")
 
 
 def _create_user():
-    data = request.json
+    user_schema = CreateUserSchema()
+    try:
+        data = user_schema.load(request.json, many=False)
+    except ValidationError as exc:
+        return exc.messages, HTTPStatus.UNPROCESSABLE_ENTITY
+
     user = User(
         username=data["username"],
         password=bcrypt.generate_password_hash(data["password"]),
         role_id=data["role_id"],
         )
-
     db.session.add(user)
     db.session.commit()
+    
+    return {"message": "User created!"}, HTTPStatus.CREATED
 
+   
 
+@jwt_required()
+@requires_role("admin")
 def _list_users():
     query = db.select(User)
     users = db.session.execute(query).scalars()
 
-    return [
-        {
-            "id": user.id,
-            "username": user.username,
-            "role": {
-                "id": user.role.id,
-                "name": user.role.name
-                }
-        }
-        for user in users
-    ]
+    users_schema = UserSchema(many=True)
+    return users_schema.dump(users)
+ 
 
-
-#  http://127.0.0.1:5000/users/
 @app.route("/", methods=["GET", "POST"])
-@jwt_required()
-@requires_role("admin")
 def list_or_create_user():
     if request.method == "POST":
-        _create_user()
-        return {"message": "User created!"}, HTTPStatus.CREATED
+        return _create_user()
     else:
         return {"users": _list_users()}
 
