@@ -1,17 +1,21 @@
 from src.app import ma
 from src.views.role import RoleSchema
 from marshmallow import fields
+from src.models.user import User
 
-
-class UserSchema(ma.Schema):
+class UserSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
-        fields = ("id", "username", "role")
-        ordered = True
+        model = User
         include_fk = True
+
+class UserIdParameter(ma.Schema):
+    user_id = fields.Integer(required=True, strict=True)
+
+    class Meta:
+        fields = ("user_id",)
+        ordered = True
         load_instance = True
-        include_relationships = True
-    
-    role = ma.Nested(RoleSchema)
+        include_fk = True
 
 class CreateUserSchema(ma.Schema):
     username = fields.String(required=True)
@@ -24,3 +28,4 @@ class CreateUserSchema(ma.Schema):
         load_instance = True
         include_fk = True
         include_relationships = True
+

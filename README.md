@@ -16,9 +16,18 @@ dio-bank/
 │   ├── app.py
 │   ├── config.py
 │   ├── controllers/
-│   │   └── role.py
+│   │   ├── auth_controller.py
+│   │   ├── role_controller.py
+│   │   └── user_controller.py
 │   ├── models/
+│   │   ├── role.py
+│   │   └── user.py
 │   ├── repositories/
+│   │   ├── role_repository.py
+│   │   └── user_repository.py
+│   ├── schemas/
+│   │   ├── role_schema.py
+│   │   └── user_schema.py
 │   ├── utils.py
 │   ├── views/
 │   └── wsgi.py
@@ -28,18 +37,51 @@ dio-bank/
 │   └── unit/
 ```
 
-## Installation
+## Features
 
-Clone the repository:
+- Add, update, delete, and query user and role data.
+- Authenticate users and manage roles.
+- Custom responses for listing users with related information (roles).
+- Graceful handling of duplicate entries with descriptive error messages.
+- Documentation available via Swagger UI.
 
-```bash
-git clone <repository-url>
-```
+## Technology Stack
+
+- Flask: For building the web application.
+- SQLAlchemy: For database interaction.
+- Alembic: For managing database migrations.
+- Marshmallow: For data validation and serialization.
+- Flask-Swagger-UI: For API documentation.
+- Pytest: For testing.
+
+## Setup Instructions
+
+Follow these steps to set up and run the project locally.
+
+### Prerequisites
+
+- Python 3.9 or higher
+
+### Installation
 
 Install the dependencies:
 
 ```bash
 poetry install
+```
+
+### Running the Application
+
+To create a new migration, execute:
+
+```bash
+poetry run alembic revision --autogenerate -m "migration_name"
+```
+
+To apply migrations and create the database, execute:
+
+```bash
+poetry run alembic upgrade head
 ```
 
 Run the application:
@@ -55,10 +97,22 @@ The application will be available at [http://127.0.0.1:5000](http://127.0.0.1:50
 ### Authentication
 
 - `POST /auth/login`: Authenticate a user and return a JWT.
+- `POST /auth/register`: Register a new user.
 
 ### Roles
 
 - `POST /roles/`: Create a new role.
+- `GET /roles/`: Retrieve all roles.
+- `GET /roles/<id>`: Retrieve a specific role by ID.
+- `PUT /roles/<id>`: Update a specific role by ID.
+- `DELETE /roles/<id>`: Delete a specific role by ID.
+
+### Users
+
+- `GET /users/`: Retrieve all users.
+- `GET /users/<id>`: Retrieve a specific user by ID.
+- `PUT /users/<id>`: Update a specific user by ID.
+- `DELETE /users/<id>`: Delete a specific user by ID.
 
 ## Testing
 
@@ -68,15 +122,11 @@ Run tests using pytest:
 pytest
 ```
 
-## License
+## References
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
-## Contributing
-
-1. Fork the repository.
-2. Create a new branch (`git checkout -b feature-branch`).
-3. Make your changes.
-4. Commit your changes (`git commit -am 'Add new feature'`).
-5. Push to the branch (`git push origin feature-branch`).
-6. Create a new Pull Request.
+- [Flask Documentation](https://flask.palletsprojects.com/en/latest/)
+- [SQLAlchemy Documentation](https://docs.sqlalchemy.org/en/latest/)
+- [Alembic Documentation](https://alembic.sqlalchemy.org/en/latest/)
+- [Marshmallow Documentation](https://marshmallow.readthedocs.io/en/latest/)
+- [Flask-Swagger-UI Documentation](https://github.com/swagger-api/swagger-ui)
+- [Pytest Documentation](https://docs.pytest.org/en/latest/)
