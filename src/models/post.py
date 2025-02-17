@@ -1,5 +1,4 @@
 import sqlalchemy as sa
-from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from sqlalchemy.orm import Mapped, mapped_column
 from src.models.base import db

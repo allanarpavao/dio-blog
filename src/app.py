@@ -44,11 +44,12 @@ def create_app(environment=os.environ['ENVIRONMENT']):
     ma.init_app(app)
 
     # register blueprints
-    from src.controllers import user, post, auth, role
+    from src.controllers import user,auth, role, blog
     app.register_blueprint(user.app)
-    app.register_blueprint(post.app)
     app.register_blueprint(auth.app)
     app.register_blueprint(role.app)
+    app.register_blueprint(blog.app)
+    app.add_url_rule('/', endpoint='index')
 
     # Adiciona as rotas ao APISpec
     with app.test_request_context():
@@ -71,7 +72,6 @@ def create_app(environment=os.environ['ENVIRONMENT']):
         config={'app_name': "DIO Bank API"}
     )
     app.register_blueprint(swagger_ui_blueprint, url_prefix=SWAGGER_URL)
-
 
     @app.errorhandler(HTTPException)
     def handle_exception(e):

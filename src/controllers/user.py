@@ -7,14 +7,15 @@ from src.utils import requires_role
 from src.app import bcrypt
 from src.views.user import UserSchema, CreateUserSchema
 from marshmallow import ValidationError
+from sqlalchemy.exc import IntegrityError
 
-# __name__ nome do módulo "user.py"
-# padrao restful: nomes no plural
+
 app = Blueprint("user", __name__, url_prefix="/users")
 
 
 def _create_user():
     user_schema = CreateUserSchema()
+    
     try:
         data = user_schema.load(request.json, many=False)
     except ValidationError as exc:
@@ -25,13 +26,19 @@ def _create_user():
         password=bcrypt.generate_password_hash(data["password"]),
         role_id=data["role_id"],
         )
-    db.session.add(user)
-    db.session.commit()
+    
+    # check if username already exists
+    try:
+      db.session.add(user)
+      db.session.commit()
+    
+    except IntegrityError:
+      db.session.rollback()
+      return {"message": f"Username '{data['username']}' already exists!"}, HTTPStatus.CONFLICT
     
     return {"message": "User created!"}, HTTPStatus.CREATED
 
    
-
 @jwt_required()
 @requires_role("admin")
 def _list_users():
@@ -42,13 +49,14 @@ def _list_users():
     return users_schema.dump(users)
  
 
-@app.route("/", methods=["GET", "POST"])
-def list_or_create_user():
+@app.route("/register", methods=["GET", "POST"])
+def create_user():
     if request.method == "POST":
         return _create_user()
-    else:
-        return {"users": _list_users()}
 
+@app.route("/list", methods=["GET", "POST"])
+def list_user():
+      return {"users": _list_users()}
 
 @app.route("/<int:user_id>")
 def get_user(user_id):

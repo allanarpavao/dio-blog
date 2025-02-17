@@ -1,5 +1,4 @@
 from src.app import ma
-from src.views.role import RoleSchema
 from marshmallow import fields
 from src.models.user import User
 
@@ -29,3 +28,14 @@ class CreateUserSchema(ma.Schema):
         include_fk = True
         include_relationships = True
 
+
+class CreateUserSchemaForm(ma.Schema):
+    username = fields.String(required=True)
+    password = fields.String(required=True)
+
+    class Meta:
+        fields = ("username", "password", "role_id")
+        ordered = True
+        load_instance = True
+        include_fk = True
+        include_relationships = True

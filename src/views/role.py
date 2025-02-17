@@ -1,5 +1,4 @@
 from src.app import ma
-from src.models.role import Role
 
 class RoleSchema(ma.Schema):
     class Meta:

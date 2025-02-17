@@ -1,6 +1,6 @@
-# DIO Bank
+# DIO Blog
 
-DIO Bank is a Flask-based web application that provides authentication and role management functionalities. This project uses SQLAlchemy for database interactions and JWT for secure authentication.
+DIO Blog is a Flask-based web application that provides authentication and role management functionalities. This project uses SQLAlchemy for database interactions and JWT for secure authentication.
 
 ## Project Structure
 ```
@@ -9,8 +9,7 @@ dio-bank/
 │   ├── alembic.ini
 │   ├── env.py
 │   ├── script.py.mako
-│   └── versions/
-│       └── 40598c136642_initial_migration.py
+│   └── versions
 ├── pyproject.toml
 ├── src/
 │   ├── app.py
@@ -30,6 +29,8 @@ dio-bank/
 │   │   └── user_schema.py
 │   ├── utils.py
 │   ├── views/
+│   │   ├── role_view.py
+│   │   └── user_view.py
 │   └── wsgi.py
 ├── tests/
 │   ├── __init__.py
@@ -39,11 +40,12 @@ dio-bank/
 
 ## Features
 
-- Add, update, delete, and query user and role data.
+- Add, update, delete, and query user, posts and role data.
 - Authenticate users and manage roles.
 - Custom responses for listing users with related information (roles).
 - Graceful handling of duplicate entries with descriptive error messages.
-- Documentation available via Swagger UI.
+- (in progress) Documentation available via Swagger UI.
+- Web interface for managing users and posts.
 
 ## Technology Stack
 
@@ -87,10 +89,8 @@ poetry run alembic upgrade head
 Run the application:
 
 ```bash
-poetry run flask run
+ENVIRONMENT=development poetry run flask --app src.app run --debug
 ```
-
-The application will be available at [http://127.0.0.1:5000](http://127.0.0.1:5000).
 
 ## API Endpoints
 
@@ -102,17 +102,25 @@ The application will be available at [http://127.0.0.1:5000](http://127.0.0.1:50
 ### Roles
 
 - `POST /roles/`: Create a new role.
-- `GET /roles/`: Retrieve all roles.
-- `GET /roles/<id>`: Retrieve a specific role by ID.
-- `PUT /roles/<id>`: Update a specific role by ID.
-- `DELETE /roles/<id>`: Delete a specific role by ID.
 
 ### Users
 
-- `GET /users/`: Retrieve all users.
+- `GET /users/list`: Retrieve all users.
 - `GET /users/<id>`: Retrieve a specific user by ID.
-- `PUT /users/<id>`: Update a specific user by ID.
+- `PATCH /users/<id>`: Update a specific user by ID.
 - `DELETE /users/<id>`: Delete a specific user by ID.
+
+### Posts
+- `POST /create/`: Create a new post.
+- (in progress) `GET /posts/`: Retrieve all posts.
+- (in progress) `GET /posts/<id>`: Retrieve a specific post by ID.
+- `PATCH /update/<id>`: Update a specific post by ID.
+- `DELETE /delete/<id>`: Delete a specific post by ID.
+
+
+## Web Interface
+
+Access the web interface at [http://127.0.0.1:5000](http://127.0.0.1:5000) to manage users and posts through a user-friendly UI.
 
 ## Testing
 
@@ -122,6 +130,13 @@ Run tests using pytest:
 pytest
 ```
 
+## Work in Progress
+
+- Documentation via Swagger UI.
+- API Endpoints: POSTS `GET /posts/`: Retrieve all posts.
+- API Endpoints: POSTS `GET /posts/<id>`: Retrieve a specific post by ID.
+
+
 ## References
 
 - [Flask Documentation](https://flask.palletsprojects.com/en/latest/)
@@ -130,3 +145,4 @@ pytest
 - [Marshmallow Documentation](https://marshmallow.readthedocs.io/en/latest/)
 - [Flask-Swagger-UI Documentation](https://github.com/swagger-api/swagger-ui)
 - [Pytest Documentation](https://docs.pytest.org/en/latest/)
+
