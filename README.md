@@ -135,6 +135,10 @@ pytest
 - Documentation via Swagger UI.
 - API Endpoints: POSTS `GET /posts/`: Retrieve all posts.
 - API Endpoints: POSTS `GET /posts/<id>`: Retrieve a specific post by ID.
+- API: authenticate user to create blog post (author_id specified in json)
+- API: authenticate user to update blog post (id specified in json)
+- API: authenticate user to delete users
+
 
 
 ## References
